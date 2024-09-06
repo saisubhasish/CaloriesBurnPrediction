@@ -46,7 +46,10 @@ def create_files():
         "README.md": "# readme_md_content",
         "requirements.txt": "# requirements_txt_content",
         "setup.py": "# setup_py_content",
-        ".env": "# .env_content"
+        ".env": "# .env_content",
+        "docker-compose.yml": "",
+        "start.sh": "",
+        
     }
     
     for file_path, content in files.items():

@@ -1,6 +1,7 @@
 import os,sys 
 import pandas as pd
 from scipy.stats import ks_2samp    # Compares the continuous distribution of two independent columns
+from typing import Optional
 
 from calories import utils
 from calories.logger import logging
@@ -17,6 +18,24 @@ class DataValidation:
             self.data_validation_config = data_validation_config
             self.data_ingestion_artifact=data_ingestion_artifact
             self.validation_error=dict()
+        except Exception as e:
+            raise CalorieException(e, sys)
+    def drop_unnecessary_columns(self, df:pd.DataFrame, report_key_name:str)->Optional[pd.DataFrame]:
+        """
+        This function will drop unnecessary columns from dataframe
+        
+        df : Accepts a pandas dataframe
+        =========================================================================================
+        returns Pandas Dataframe by dropping 'Ussr_ID' column
+        """
+        try:
+            drop_columns = ['User_ID']
+            logging.info(f"UnnecessaColumns dropped: {drop_columns}")
+            self.validation_error[report_key_name] = drop_columns
+            drop_columns = df[drop_columns]
+            df.drop(columns=drop_columns, axis=1, inplace=True)
+            return df
+            
         except Exception as e:
             raise CalorieException(e, sys)
         
@@ -87,6 +106,11 @@ class DataValidation:
             train_df = pd.read_csv(self.data_ingestion_artifact.train_file_path)
             logging.info("Reading test dataframe")
             test_df = pd.read_csv(self.data_ingestion_artifact.test_file_path)
+
+            logging.info("Drop unnecessary columns")
+            base_df = self.drop_unnecessary_columns(df=base_df, report_key_name="base_df")
+            train_df = self.drop_unnecessary_columns(df=train_df, report_key_name="train_df")
+            test_df = self.drop_unnecessary_columns(df=test_df, report_key_name="test_df")
 
             logging.info("Is all required columns present in train df")
             train_df_columns_status = self.is_required_columns_exists(base_df=base_df, current_df=train_df,report_key_name="missing_columns_within_train_dataset")

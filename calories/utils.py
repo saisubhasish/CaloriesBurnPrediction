@@ -41,14 +41,13 @@ def write_yaml_file(file_path,data:dict):
     except Exception as e:
         raise CalorieException(e, sys)
     
-def convert_columns_float(df:pd.DataFrame,exclude_columns:list)->pd.DataFrame:
+def convert_columns_float(df:pd.DataFrame)->pd.DataFrame:
     """
     Converting column to float type except target column
     """
     try:
         for column in df.columns:
-            if column not in exclude_columns:
-                df[column]=df[column].astype('float')
+            df[column]=df[column].astype('float')
         return df
     except Exception as e:
         raise e
